@@ -3,6 +3,7 @@
 #include <map>
 #include "ImageLoader.h"
 #include "EdgeDetector.h"
+#include "HoughTransform.h"
 #include <tbb/flow_graph.h>
 #include <chrono>
 
@@ -13,10 +14,12 @@ struct ImageData {
     Image original;
     Image gray;
     Image edges;
+    HoughResult accumulator;
     string inputPath;
     string outputPath;
     double prepareImageTime;
     double detectEdgesTime;
+    double houghTransformTime;
 };
 
 void processImage(const string& input, const string& output) {
@@ -44,7 +47,18 @@ void processImage(const string& input, const string& output) {
             return data;
         });
 
+    flow::function_node<ImageData, ImageData> houghTransformNode(graph, flow::serial,
+        [](ImageData data) -> ImageData {
+            auto start = chrono::high_resolution_clock::now();
+            data.accumulator = houghTransform(data.edges);
+            auto end = chrono::high_resolution_clock::now();
+            data.houghTransformTime = chrono::duration<double, std::milli>(end - start).count();
+            cout << "Time [houghTransformNode]: " << data.houghTransformTime << endl;
+            return data;
+        });
+
     flow::make_edge(prepareImageNode, detectEdgesNode);
+    flow::make_edge(detectEdgesNode, houghTransformNode);
 
     ImageData inputData;
     inputData.inputPath = input;

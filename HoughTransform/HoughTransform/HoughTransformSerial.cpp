@@ -3,6 +3,7 @@
 #include <map>
 #include "ImageLoader.h"
 #include "EdgeDetector.h"
+#include "HoughTransform.h"
 #include <chrono>
 
 using namespace std;
@@ -21,6 +22,12 @@ void processImage(const string& input, const string& output) {
     end = chrono::high_resolution_clock::now();
     double timeDetectEdges = chrono::duration<double, std::milli>(end - start).count();
     cout << "Time [detectEdges]: " << timeDetectEdges << endl;
+
+    start = chrono::high_resolution_clock::now();
+    HoughResult hough = houghTransform(edges);
+    end = chrono::high_resolution_clock::now();
+    double timeHoughTransform = chrono::duration<double, std::milli>(end - start).count();
+    cout << "Time [houghTransform]: " << timeHoughTransform << endl;
 }
 
 int main()
