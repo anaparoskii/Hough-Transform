@@ -2,6 +2,7 @@
 #include <string>
 #include <map>
 #include "ImageLoader.h"
+#include "EdgeDetector.h"
 #include <chrono>
 
 using namespace std;
@@ -12,8 +13,14 @@ void processImage(const string& input, const string& output) {
     Image gray = grayscaleConvert(img);
     auto end = chrono::high_resolution_clock::now();
     saveImage(output + "_grayscale.png", gray);
-    double time = chrono::duration<double, std::milli>(end - start).count();
-    cout << "Time [prepareImageNode]: " << time << endl;
+    double timePrepare = chrono::duration<double, std::milli>(end - start).count();
+    cout << "Time [prepareImage]: " << timePrepare << endl;
+
+    start = chrono::high_resolution_clock::now();
+    Image edges = sobelEdgeDetect(gray);
+    end = chrono::high_resolution_clock::now();
+    double timeDetectEdges = chrono::duration<double, std::milli>(end - start).count();
+    cout << "Time [detectEdges]: " << timeDetectEdges << endl;
 }
 
 int main()

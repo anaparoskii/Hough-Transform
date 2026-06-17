@@ -2,6 +2,7 @@
 #include <string>
 #include <map>
 #include "ImageLoader.h"
+#include "EdgeDetector.h"
 #include <tbb/flow_graph.h>
 #include <chrono>
 
@@ -11,9 +12,11 @@ using namespace tbb;
 struct ImageData {
     Image original;
     Image gray;
+    Image edges;
     string inputPath;
     string outputPath;
     double prepareImageTime;
+    double detectEdgesTime;
 };
 
 void processImage(const string& input, const string& output) {
@@ -30,6 +33,18 @@ void processImage(const string& input, const string& output) {
             cout << "Time [prepareImageNode]: " << data.prepareImageTime << endl;
             return data;
         });
+
+    flow::function_node<ImageData, ImageData> detectEdgesNode(graph, flow::serial,
+        [](ImageData data) -> ImageData {
+            auto start = chrono::high_resolution_clock::now();
+            data.edges = sobelEdgeDetect(data.gray);
+            auto end = chrono::high_resolution_clock::now();
+            data.detectEdgesTime = chrono::duration<double, std::milli>(end - start).count();
+            cout << "Time [detectEdgesNode]: " << data.detectEdgesTime << endl;
+            return data;
+        });
+
+    flow::make_edge(prepareImageNode, detectEdgesNode);
 
     ImageData inputData;
     inputData.inputPath = input;
