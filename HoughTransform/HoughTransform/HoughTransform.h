@@ -10,7 +10,7 @@ struct HoughResult {
 	int rhoSize;
 	int thetaSize;
 	int diag;
-	vector<pair<double, double>> lines;
+	int maxVal;
 };
 
 HoughResult houghTransform(const Image& edges);

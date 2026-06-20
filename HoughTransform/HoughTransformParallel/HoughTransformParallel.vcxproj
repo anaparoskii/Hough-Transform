@@ -128,6 +128,7 @@
     <ClCompile Include="HoughTransform.cpp" />
     <ClCompile Include="HoughTransformParallel.cpp" />
     <ClCompile Include="ImageLoader.cpp" />
+    <ClCompile Include="LineDetector.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -138,6 +139,7 @@
     <ClInclude Include="EdgeDetector.h" />
     <ClInclude Include="HoughTransform.h" />
     <ClInclude Include="ImageLoader.h" />
+    <ClInclude Include="LineDetector.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -45,13 +45,15 @@ HoughResult houghTransform(const Image& edges) {
             }
         });
 
-    for (int r = 0; r < result.rhoSize; r++) {
-        for (int t = 0; t < result.thetaSize; t++) {
-            if (result.accumulator[r * result.thetaSize + t] >= 150) {
-                result.lines.push_back({ (double)(r - result.diag), t * PI / 180.0 });
-            }
-        }
-    }
+    result.maxVal = parallel_reduce(
+        blocked_range<int>(0, (int)result.accumulator.size()), 0,
+        [&](const blocked_range<int>& r, int localMax) {
+            for (int i = r.begin(); i != r.end(); i++)
+                if (result.accumulator[i] > localMax) localMax = result.accumulator[i];
+            return localMax;
+        },
+        [](int a, int b) { return max(a, b); }
+    );
 
     return result;
 }

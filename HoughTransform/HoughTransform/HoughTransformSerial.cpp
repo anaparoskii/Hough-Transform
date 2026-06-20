@@ -4,6 +4,7 @@
 #include "ImageLoader.h"
 #include "EdgeDetector.h"
 #include "HoughTransform.h"
+#include "LineDetector.h"
 #include <chrono>
 
 using namespace std;
@@ -28,6 +29,15 @@ void processImage(const string& input, const string& output) {
     end = chrono::high_resolution_clock::now();
     double timeHoughTransform = chrono::duration<double, std::milli>(end - start).count();
     cout << "Time [houghTransform]: " << timeHoughTransform << endl;
+
+    start = chrono::high_resolution_clock::now();
+    vector<Line> lines = detectLines(hough);
+    end = chrono::high_resolution_clock::now();
+    double timeDetectLines = chrono::duration<double, std::milli>(end - start).count();
+    cout << "Time [detectLines]: " << timeDetectLines << endl;
+
+    double timeTaken = timePrepare + timeDetectEdges + timeHoughTransform + timeDetectLines;
+    cout << "Time taken: " << timeTaken << endl;
 }
 
 int main()

@@ -5,6 +5,7 @@
 #include <tbb/parallel_for.h>
 #include <tbb/blocked_range.h>
 #include <tbb/combinable.h>
+#include <tbb/parallel_reduce.h>
 
 using namespace std;
 using namespace tbb;
@@ -14,7 +15,7 @@ struct HoughResult {
 	int rhoSize;
 	int thetaSize;
 	int diag;
-	vector<pair<double, double>> lines;
+	int maxVal;
 };
 
 HoughResult houghTransform(const Image& edges);

@@ -30,13 +30,11 @@ HoughResult houghTransform(const Image& edges) {
         }
     }
 
-    for (int r = 0; r < result.rhoSize; r++) {
-        for (int t = 0; t < result.thetaSize; t++) {
-            if (result.accumulator[r * result.thetaSize + t] >= 150) {
-                result.lines.push_back({ (double)(r - result.diag), t * PI / 180.0 });
-            }
-        }
-    }
+    int maxVal = 0;
+    for (int i = 0; i < (int)result.accumulator.size(); i++)
+        if (result.accumulator[i] > maxVal)
+            maxVal = result.accumulator[i];
+    result.maxVal = maxVal;
 
     return result;
 }

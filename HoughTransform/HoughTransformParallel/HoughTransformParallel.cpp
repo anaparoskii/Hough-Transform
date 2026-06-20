@@ -4,6 +4,7 @@
 #include "ImageLoader.h"
 #include "EdgeDetector.h"
 #include "HoughTransform.h"
+#include "LineDetector.h"
 #include <tbb/flow_graph.h>
 #include <chrono>
 
@@ -14,12 +15,14 @@ struct ImageData {
     Image original;
     Image gray;
     Image edges;
+    vector<Line> lines;
     HoughResult accumulator;
     string inputPath;
     string outputPath;
     double prepareImageTime;
     double detectEdgesTime;
     double houghTransformTime;
+    double detectLinesTime;
 };
 
 void processImage(const string& input, const string& output) {
@@ -57,8 +60,29 @@ void processImage(const string& input, const string& output) {
             return data;
         });
 
+    flow::function_node<ImageData, ImageData> detectLinesNode(graph, flow::serial,
+        [](ImageData data) -> ImageData {
+            auto start = chrono::high_resolution_clock::now();
+            data.lines = detectLines(data.accumulator);
+            auto end = chrono::high_resolution_clock::now();
+            data.detectLinesTime = chrono::duration<double, std::milli>(end - start).count();
+            cout << "Time [detectLinesNode]: " << data.detectLinesTime << endl;
+            return data;
+        });
+
+    flow::function_node<ImageData, ImageData> timeTakenNode(graph, flow::serial,
+        [](ImageData data) -> ImageData {
+            double timeTaken =
+                data.prepareImageTime + data.detectEdgesTime 
+                + data.houghTransformTime + data.detectLinesTime;
+            cout << "Time taken: " << timeTaken << endl;
+            return data;
+        });
+
     flow::make_edge(prepareImageNode, detectEdgesNode);
     flow::make_edge(detectEdgesNode, houghTransformNode);
+    flow::make_edge(houghTransformNode, detectLinesNode);
+    flow::make_edge(detectLinesNode, timeTakenNode);
 
     ImageData inputData;
     inputData.inputPath = input;
@@ -89,6 +113,6 @@ int main()
             cerr << "Failed: " << e.what() << endl;
         }
     }
-
+ 
     cout << "Done" << endl;
 }
