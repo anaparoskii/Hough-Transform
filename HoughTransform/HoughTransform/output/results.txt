@@ -1,0 +1,29 @@
+Hough Transform Results Serial -----
+Image: images/test1.png
+Time - prepare image: 24.7681
+Time - detect edges: 4.8875
+Time - hough transform: 24.437
+Time - detect lines: 0.8523
+Time - total: 54.9449
+Number of lines: 21
+Image: images/test2.png
+Time - prepare image: 6.6417
+Time - detect edges: 1.3957
+Time - hough transform: 24.8671
+Time - detect lines: 0.5654
+Time - total: 33.4699
+Number of lines: 54
+Image: images/test3.png
+Time - prepare image: 6.2851
+Time - detect edges: 1.6131
+Time - hough transform: 12.9623
+Time - detect lines: 0.153
+Time - total: 21.0135
+Number of lines: 11
+Image: images/test4.bmp
+Time - prepare image: 12.6952
+Time - detect edges: 4.4307
+Time - hough transform: 18.7451
+Time - detect lines: 0.6235
+Time - total: 36.4945
+Number of lines: 3

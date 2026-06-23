@@ -14,3 +14,4 @@ struct HoughResult {
 };
 
 HoughResult houghTransform(const Image& edges);
+Image visualizeAccumulator(const HoughResult& result);

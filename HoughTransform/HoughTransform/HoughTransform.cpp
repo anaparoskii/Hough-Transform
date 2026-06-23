@@ -38,3 +38,25 @@ HoughResult houghTransform(const Image& edges) {
 
     return result;
 }
+
+Image visualizeAccumulator(const HoughResult& result) {
+    Image img;
+    img.width = result.thetaSize;
+    img.height = result.rhoSize;
+    img.channels = 3;
+    img.data.resize(img.width * img.height * 3);
+
+    for (int r = 0; r < result.rhoSize; r++) {
+        for (int t = 0; t < result.thetaSize; t++) {
+            unsigned char val = result.maxVal > 0
+                ? (unsigned char)(result.accumulator[r * result.thetaSize + t] * 255 / result.maxVal)
+                : 0;
+            int idx = (r * img.width + t) * 3;
+            img.data[idx] = val;
+            img.data[idx + 1] = val;
+            img.data[idx + 2] = val;
+        }
+    }
+
+    return img;
+}

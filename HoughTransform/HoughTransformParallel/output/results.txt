@@ -1,0 +1,36 @@
+Hough Transform Results Parallel -----
+Image: images/test3.png
+Time - prepare image: 7.3946
+Time - detect edges: 0.645
+Time - hough transform: 11.856
+Time - detect lines: 0.2209
+Time - total: 20.1165
+Number of lines: 11
+Image: images/test2.png
+Time - prepare image: 8.481
+Time - detect edges: 0.5068
+Time - hough transform: 11.6396
+Time - detect lines: 0.4731
+Time - total: 21.1005
+Number of lines: 54
+Image: images/test4.bmp
+Time - prepare image: 19.2255
+Time - detect edges: 1.9501
+Time - hough transform: 12.6876
+Time - detect lines: 0.3254
+Time - total: 34.1886
+Number of lines: 3
+Image: images/test1.png
+Time - prepare image: 82.9549
+Time - detect edges: 2.0852
+Time - hough transform: 13.4484
+Time - detect lines: 0.2799
+Time - total: 98.7684
+Number of lines: 21
+
+Speedup (serial / parallel) -----
+Image: images/test1.png -> speedup: 0.5563x
+Image: images/test2.png -> speedup: 1.58621x
+Image: images/test3.png -> speedup: 1.04459x
+Image: images/test4.bmp -> speedup: 1.06745x
+Average speedup: 1.06364x

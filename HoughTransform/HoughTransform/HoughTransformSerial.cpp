@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <map>
+#include <fstream>
 #include "ImageLoader.h"
 #include "EdgeDetector.h"
 #include "HoughTransform.h"
@@ -9,12 +10,11 @@
 
 using namespace std;
 
-void processImage(const string& input, const string& output) {
+double processImage(const string& input, const string& output, ofstream& outputFile) {
     auto start = chrono::high_resolution_clock::now();
     Image img = loadImage(input);
     Image gray = grayscaleConvert(img);
     auto end = chrono::high_resolution_clock::now();
-    saveImage(output + "_grayscale.png", gray);
     double timePrepare = chrono::duration<double, std::milli>(end - start).count();
     cout << "Time [prepareImage]: " << timePrepare << endl;
 
@@ -36,8 +36,24 @@ void processImage(const string& input, const string& output) {
     double timeDetectLines = chrono::duration<double, std::milli>(end - start).count();
     cout << "Time [detectLines]: " << timeDetectLines << endl;
 
-    double timeTaken = timePrepare + timeDetectEdges + timeHoughTransform + timeDetectLines;
-    cout << "Time taken: " << timeTaken << endl;
+    double timeTotal = timePrepare + timeDetectEdges + timeHoughTransform + timeDetectLines;
+
+    outputFile << "Image: " << input << "\n";
+    outputFile << "Time - prepare image: " << timePrepare << "\n";
+    outputFile << "Time - detect edges: " << timeDetectEdges << "\n";
+    outputFile << "Time - hough transform: " << timeHoughTransform << "\n";
+    outputFile << "Time - detect lines: " << timeDetectLines << "\n";
+    outputFile << "Time - total: " << timeTotal << "\n";
+    outputFile << "Number of lines: " << lines.size() << "\n";
+
+    Image imageLines = drawLines(img, lines);
+    saveImage(output + "_grayscale.png", gray);
+    saveImage(output + "_edges.png", edges);
+    saveImage(output + "_result.png", imageLines);
+    saveImage(output + "_accumulator.png", visualizeAccumulator(hough));
+
+    cout << "Results saved!" << endl;
+    return timeTotal;
 }
 
 int main()
@@ -45,17 +61,21 @@ int main()
     cout << "Hough Transform Serial" << endl;
 
     map<string, string> images = {
-        { "images/test1.bmp", "output/test1" },
+        { "images/test1.png", "output/test1" },
         { "images/test2.png", "output/test2" },
         { "images/test3.png", "output/test3" },
-        { "images/test4.bmp", "output/test4" },
-        { "images/test5.png", "output/test5" },
-        { "images/test6.png", "output/test6" }
+        { "images/test4.bmp", "output/test4" }
     };
+
+    ofstream outputFile("output/results.txt");
+    outputFile << "Hough Transform Results Serial -----\n";
+
+    ofstream timingFile("output/serial_times.txt");
 
     for (const auto& pair : images) {
         try {
-            processImage(pair.first, pair.second);
+            double total = processImage(pair.first, pair.second, outputFile);
+            timingFile << pair.first << " " << total << "\n";
         }
         catch (const exception& e) {
             cerr << "Failed: " << e.what() << endl;
